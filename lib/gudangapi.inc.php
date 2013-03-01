@@ -9,12 +9,12 @@
 # This is free software; you can redistribute it and/or modify it under the
 # Artistic License 2.0.
 
-require_once "sub_spec_http_client.inc.php";
+require_once "phi_access_http_client.inc.php";
 
-$GA_CLIENT_VERSION = "0.01";
+$GA_CLIENT_VERSION = "0.02";
 
 function call_ga_api($module, $func, $args=array(), $opts=array()) {
-  echo "D:module=$module\n";
+  #echo "D:module=$module\n";
   if (!preg_match("#\A[\w-]+((?:::|/)[\w-]+)*\z#", $module))
     die("Invalid module syntax");
   $module = preg_replace('!/!', '::', $module);
@@ -25,8 +25,11 @@ function call_ga_api($module, $func, $args=array(), $opts=array()) {
 
   $host  = "api.gudangapi.com";
   $proto = isset($opts['https']) && $opts['https'] ? "https" : "http";
-  $url   = "$proto://$host/v1/$module/$func;p";
+  $url   = "$proto://$host/v1/$module/$func";
 
   #echo "D:url=$url\n";
-  return call_sub_http($url, $module, $func, $args, $opts);
+
+  $copts = array();
+
+  return phi_http_request("call", $url, array("args"=>$args), $copts);
 }
